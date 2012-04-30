@@ -13,76 +13,104 @@ var def_latval = document.getElementById(latval).value;
 
 function if_gmap_init()
 {
-	var curpoint = new google.maps.LatLng(def_latval,def_longval);
-	geocoder = new google.maps.Geocoder();
-	gmapdata = new google.maps.Map(document.getElementById("mapitems"), {
-		center: curpoint,
-		zoom: def_zoomval,
-		mapTypeId: 'roadmap'
-		});
+    var curpoint = new google.maps.LatLng(def_latval,def_longval);
+    geocoder = new google.maps.Geocoder();
+    gmapdata = new google.maps.Map(document.getElementById("mapitems"), {
+        center: curpoint,
+        zoom: def_zoomval,
+        mapTypeId: 'roadmap'
+    });
 
-	gmapmarker = new google.maps.Marker({
-					map: gmapdata,
-					position: curpoint
-				});
+    gmapmarker = new google.maps.Marker({
+        map: gmapdata,
+        position: curpoint
+    });
 
-	infoWindow = new google.maps.InfoWindow;
-	google.maps.event.addListener(gmapdata, 'click', function(event) {
-		document.getElementById(lngval).value =
-event.latLng.lng().toFixed(6);
-		document.getElementById(latval).value =
-event.latLng.lat().toFixed(6);
-		gmapmarker.setPosition(event.latLng);
-	});
+    infoWindow = new google.maps.InfoWindow;
+    google.maps.event.addListener(gmapdata, 'click', function(event) {
+        document.getElementById(lngval).value =
+        event.latLng.lng().toFixed(6);
+        document.getElementById(latval).value =
+        event.latLng.lat().toFixed(6);
+        gmapmarker.setPosition(event.latLng);
+    });
 
-	google.maps.event.addListener(gmapmarker, 'click', function() {
-		infoWindow.open(gmapdata, gmapmarker);
-	});
+    google.maps.event.addListener(gmapmarker, 'click', function() {
+        infoWindow.open(gmapdata, gmapmarker);
+    });
 
-	document.getElementById(lngval).value = def_longval;
-	document.getElementById(latval).value = def_latval;
+    document.getElementById(lngval).value = def_longval;
+    document.getElementById(latval).value = def_latval;
 
-	return false;
+    return false;
 } // end of if_gmap_init
 
 
 function if_gmap_loadpicker()
 {
-	var longval = document.getElementById(lngval).value;
-	var latval = document.getElementById(latval).value;
+    var longval = document.getElementById(lngval).value;
+    var latval = document.getElementById(latval).value;
 
-	if (longval.length > 0) {
-		if (isNaN(parseFloat(longval)) == true) {
-			longval = def_longval;
-		} // end of if
-	} else {
-		longval = def_longval;
-	} // end of if
+    if (longval.length > 0) {
+        if (isNaN(parseFloat(longval)) == true) {
+            longval = def_longval;
+        } // end of if
+    } else {
+        longval = def_longval;
+    } // end of if
 
-	if (latval.length > 0) {
-		if (isNaN(parseFloat(latval)) == true) {
-			latval = def_latval;
-		} // end of if
-	} else {
-		latval = def_latval;
-	} // end of if
+    if (latval.length > 0) {
+        if (isNaN(parseFloat(latval)) == true) {
+            latval = def_latval;
+        } // end of if
+    } else {
+        latval = def_latval;
+    } // end of if
 
-	var curpoint = new google.maps.LatLng(latval,longval);
+    var curpoint = new google.maps.LatLng(latval,longval);
 
-	gmapmarker.setPosition(curpoint);
-	gmapdata.setCenter(curpoint);
-	//gmapdata.setZoom(zoomval);
-	return false;
+    gmapmarker.setPosition(curpoint);
+    gmapdata.setCenter(curpoint);
+    //gmapdata.setZoom(zoomval);
+    return false;
 } // end of if_gmap_loadpicker
-
-
- function codeAddress() {
+  
+function codeAddress() {
     var address = document.getElementById("address").value;
-    geocoder.geocode( { 'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        gmapdata.setCenter(results[0].geometry.location);
-      } else {
-        alert("No se pudo geolocalizar la direccion por el motivo: " + status);
-      }
+    if (address.length == 0) {
+        alert('Debes ingresar una dirección.');
+        return false;
+    }
+    geocoder.geocode( {
+        'address': address
+    }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            
+            
+            curpoint = results[0].geometry.location;
+            
+            gmapdata.setCenter(curpoint);
+            
+            gmapmarker.setPosition(curpoint);
+            
+            document.getElementById(lngval).value = curpoint.lng();
+            document.getElementById(latval).value = curpoint.lat();
+        
+            gmapdata.setZoom(16);
+        
+        } else {
+            alert("No se encontro la ubicación, intente realizar la busqueda de manera correcta");
+        }
     });
-  }
+}
+
+function submitSearchGeoForm(e){
+    var unicode = e.keyCode? e.keyCode : e.charCode
+    if (unicode == 13) {
+        codeAddress();
+        return false;
+    }
+}
+
+
+

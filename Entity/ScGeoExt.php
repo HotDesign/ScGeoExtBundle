@@ -4,7 +4,7 @@ namespace HotDesign\ScGeoExtBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use HotDesign\SimpleCatalogBundle\Config\MyConfig;
+use ConfigClasses\MyConfig;
 
 /**
  * HotDesign\ScGeoExtBundle\Entity\ScGeoExt
